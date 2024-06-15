@@ -1,4 +1,5 @@
 import numpy as np
+from math import *
 from math import sqrt,floor,ceil
 def convertKeyToMatrix(key,m):
     matrix_key = []
@@ -37,20 +38,29 @@ def encrypt(matrix_key,matrix_text,m):
 def decrypt(C,matrix_key):
     matrix_key_1 = np.array(matrix_key) #Ma tran khoa 
     C1 = np.array(C) #Ma tran da ma hoa
-    det = np.linalg.det(matrix_key_1)
+    det = np.linalg.det(matrix_key_1) #DInh thuc dung
     if det != 0 :
-        matrix_key_pre = np.linalg.inv(matrix_key_1) #nghich dao khoa
-        P = C1@matrix_key_pre
+        # Ma tran nghich dao
+        matrix_key_pre = np.linalg.inv(matrix_key_1)
+        for i in range(len(matrix_key_pre)) :
+            for j in range(len(matrix_key_pre[i])) :
+                matrix_key_pre[i][j] = (matrix_key_pre[i][j] * det) % 26
+        print(matrix_key_pre)
+        det %= 26
+        K_nghichDao = ((det**-1)%26 * (matrix_key_pre)%26) % 26
+        print(K_nghichDao)
+        # CHuoi goc 
+        P = C1@K_nghichDao
+        print(P)
         for i in range(len(P)) :
             for j in range(len(P[i])) :
-                P[i][j] = int(round(P[i][j] % 26))
+                P[i][j] = int(round(P[i][j]))
         for i in range(len(P)) :
             for j in range(len(P[i])) :
                 k = int(P[i][j])
-                print(english_alphabet[k],end='')
+                print(english_alphabet[k % 26],end='')
     else :
         print("Không thể giải mã")
-
 english_alphabet = 'abcdefghijklmnopqrstuvwxyz'
 
 def menu() :
@@ -74,3 +84,4 @@ def menu() :
         else :
             break
 menu()
+# key : 11 8 3 7

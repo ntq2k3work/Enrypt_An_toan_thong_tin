@@ -20,7 +20,10 @@ def convertToMatrix(text,m):
                 matrix_text[i].append(english_alphabet.find(text[k]))
                 k+=1
     return matrix_text
-        
+def UCLN(a,b):
+    if b == 0:
+        return a
+    return UCLN(b,a%b)
 def encrypt(matrix_key,matrix_text,m):
     matrix_text1 = np.array(matrix_text)
     matrix_key1 = np.array(matrix_key)
@@ -34,24 +37,22 @@ def encrypt(matrix_key,matrix_text,m):
             print(english_alphabet[C[i][j]],end='')
     return C
 
-            
+
 def decrypt(C,matrix_key):
     matrix_key_1 = np.array(matrix_key) #Ma tran khoa 
     C1 = np.array(C) #Ma tran da ma hoa
     det = np.linalg.det(matrix_key_1) #DInh thuc dung
-    if det != 0 :
+    # Neu det khac 0 va det va 26 nguyen to cung nhau thi moi giai ma duoc
+    if det != 0 and UCLN(int(det),26) == 1 :
         # Ma tran nghich dao
         matrix_key_pre = np.linalg.inv(matrix_key_1)
         for i in range(len(matrix_key_pre)) :
             for j in range(len(matrix_key_pre[i])) :
                 matrix_key_pre[i][j] = (matrix_key_pre[i][j] * det) % 26
-        print(matrix_key_pre)
         det %= 26
         K_nghichDao = ((det**-1)%26 * (matrix_key_pre)%26) % 26
-        print(K_nghichDao)
         # CHuoi goc 
         P = C1@K_nghichDao
-        print(P)
         for i in range(len(P)) :
             for j in range(len(P[i])) :
                 P[i][j] = int(round(P[i][j]))
@@ -73,6 +74,9 @@ def menu() :
             plaintext = input("Nhập nội dung : ")
             key = list(map(int,input("Nhập chuỗi mã hoá: ").split(' ')))
             m = int(sqrt(len(key)))
+            if m*m != len(key):
+                print("Khong phai ma tran vuong")
+            
             matrix_key = convertKeyToMatrix(key,m)
             matrix_text = convertToMatrix(plaintext,m)
         elif choose == '2':

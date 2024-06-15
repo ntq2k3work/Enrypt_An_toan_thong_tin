@@ -71,11 +71,13 @@ def menu() :
     while True :
         choose = input("Nhập lựa chọn : ")
         if choose == '1' :
-            plaintext = input("Nhập nội dung : ")
-            key = list(map(int,input("Nhập chuỗi mã hoá: ").split(' ')))
+            key = list(map(int,input("Nhập ma trận vuông key: ").split(' ')))
             m = int(sqrt(len(key)))
             if m*m != len(key):
                 print("Khong phai ma tran vuong")
+            plaintext = input("Nhập nội dung : ")
+            if len(plaintext) % m != 0 :
+                print("Chuỗi phải có độ dài chia hết cho {m}".format(m=m))
             
             matrix_key = convertKeyToMatrix(key,m)
             matrix_text = convertToMatrix(plaintext,m)
